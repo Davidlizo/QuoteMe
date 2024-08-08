@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:quote_me/Features/auth/pages/forget_password.dart';
+import 'package:quote_me/features/auth/pages/forget_password.dart';
 
-import 'Features/auth/contoller/auth_controllers.dart';
-import 'Features/auth/pages/login.dart';
-import 'Features/auth/pages/signup.dart';
-import 'Features/quote_me/widgets/bottom_navigation.dart';
-import 'Features/quote_me/pages/splash_screen.dart';
+import 'features/auth/contoller/auth_controllers.dart';
+import 'features/auth/pages/login.dart';
+import 'features/auth/pages/signup.dart';
+
+import 'features/quote_me/pages/splash_screen.dart';
+import 'features/quote_me/widgets/bottom_navigation_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

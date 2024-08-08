@@ -21,7 +21,7 @@ class QuoteListView extends StatefulWidget {
   });
 
   @override
-  _QuoteListViewState createState() => _QuoteListViewState();
+  State<QuoteListView> createState() => _QuoteListViewState();
 }
 
 class _QuoteListViewState extends State<QuoteListView> {
