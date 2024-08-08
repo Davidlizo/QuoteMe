@@ -6,8 +6,7 @@ class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
-  _AnimatedSplashScreenState createState() => _AnimatedSplashScreenState();
+  State<AnimatedSplashScreen> createState() => _AnimatedSplashScreenState();
 }
 
 class _AnimatedSplashScreenState extends State<AnimatedSplashScreen> with TickerProviderStateMixin {
