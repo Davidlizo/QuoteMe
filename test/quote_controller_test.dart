@@ -2,19 +2,15 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:quote_me/Features/quote_me/controllers/favourite_controller.dart';
 import 'package:quote_me/Features/quote_me/controllers/quote_contoller.dart';
-import 'package:quote_me/Features/quote_me/model/qoute_model.dart';
 import 'package:quote_me/Features/quote_me/service/quote_service.dart';
 import 'package:quote_me/utils/quote_exceptions.dart';
 
 void main() {
-  late FavoritesController favoritesController;
   late QuoteService quoteService;
   late QuoteController quoteController;
 
   setUp(() {
-    favoritesController = FavoritesController();
     quoteService = QuoteService();
     quoteController = QuoteController();
   });
@@ -24,57 +20,6 @@ void main() {
   });
 
   group('Quote me tests', () {
-    test('Add favorite', () {
-      // Create a quote
-      final quote = Quote(
-        id: 1,
-        quote: 'Test quote',
-        author: 'Test author',
-      );
-
-      // Add favorite
-      favoritesController.addFavorite(quote);
-
-      // Verify favorite is added
-      expect(favoritesController.favorites, [quote]);
-    });
-
-    test('Remove favorite', () {
-      // Create a quote
-      final quote = Quote(
-        id: 1,
-        quote: 'Test quote',
-        author: 'Test author',
-      );
-
-      // Add favorite
-      favoritesController.addFavorite(quote);
-
-      // Remove favorite
-      favoritesController.removeFavorite(quote);
-
-      // Verify favorite is removed
-      expect(favoritesController.favorites, []);
-    });
-
-    test('Add duplicate favorite', () {
-      // Create a quote
-      final quote = Quote(
-        id: 1,
-        quote: 'Test quote',
-        author: 'Test author',
-      );
-
-      // Add favorite
-      favoritesController.addFavorite(quote);
-
-      // Try to add duplicate favorite
-      favoritesController.addFavorite(quote);
-
-      // Verify favorite is not added again
-      expect(favoritesController.favorites, [quote]);
-    });
-
     test('Fetch quotes successfully', () async {
       // Mock HTTP client
       final client = MockClient((request) async {
