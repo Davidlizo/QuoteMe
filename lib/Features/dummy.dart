@@ -12,17 +12,17 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       body: Center(
-//         child: ElevatedButton(
-//           onPressed: () {
+      // body: Center(
+      //   child: ElevatedButton(
+      //     onPressed: () {
             
-//             FirebaseAuth.instance.signOut().then((value) {
-//               Get.offNamed('/signin');
-//             });
-//           },
-//           child: const Text('Logout'),
-//         ),
-//       ),
+      //       FirebaseAuth.instance.signOut().then((value) {
+      //         Get.offNamed('/signin');
+      //       });
+      //     },
+      //     child: const Text('Logout'),
+      //   ),
+      // ),
 //     );
 //   }
 // }
