@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../auth/pages/login.dart';
 import '../widgets/page_transition.dart';
+
 
 class AnimatedSplashScreen extends StatefulWidget {
   const AnimatedSplashScreen({super.key});
@@ -15,19 +18,20 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen> with Ticker
   late Animation<Offset> _imageSlideAnimation;
   late Animation<Offset> _textSlideAnimation;
   late Animation<double> _blinkAnimation;
+  late Future<bool> _checkSessionFuture;
 
   @override
   void initState() {
     super.initState();
 
-    // Animation controller for slide-in animations
+    // Initialize animation controllers
     _slideController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     );
 
     _imageSlideAnimation = Tween<Offset>(
-      begin: const Offset(-1, 0), // Start from the left
+      begin: const Offset(-1, 0),
       end: const Offset(0, 0),
     ).animate(CurvedAnimation(
       parent: _slideController,
@@ -35,14 +39,13 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen> with Ticker
     ));
 
     _textSlideAnimation = Tween<Offset>(
-      begin: const Offset(1, 0), // Start from the right
+      begin: const Offset(1, 0),
       end: const Offset(0, 0),
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: Curves.easeInOut,
     ));
 
-    // Animation controller for blinking effect
     _blinkController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -67,17 +70,48 @@ class _AnimatedSplashScreenState extends State<AnimatedSplashScreen> with Ticker
       ),
     ]).animate(_blinkController);
 
-    _slideController.forward().then((_) {
-      // Starts blinking animation after slide-in animations
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _blinkController.forward().whenComplete(() {
-          Future.delayed(const Duration(seconds: 1), () {
-            // ignore: use_build_context_synchronously
-            Navigator.of(context).pushReplacement(SlideUpPageRoute(page: const SigninScreen()));
-          });
-        });
-      });
+    // Load user session before starting animations
+    _checkSessionFuture = _checkSession();
+  }
+
+  Future<bool> _checkSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? email = prefs.getString('email');
+    String? password = prefs.getString('password');
+    bool rememberMe = prefs.getBool('remember_me') ?? false;
+
+    if (rememberMe && email != null && password != null) {
+      // If credentials are saved, navigate immediately
+      Get.offNamed('/quote_me');
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Only start the splash animation if there's no saved session
+    _checkSessionFuture.then((hasSession) {
+      if (!hasSession) {
+        _startSplashAnimation();
+      }
     });
+  }
+
+  Future<void> _startSplashAnimation() async {
+    await _slideController.forward().orCancel;
+    await _blinkController.forward().orCancel;
+
+    // Ensure the animation frames are visible
+    if (mounted) {
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(SlideUpPageRoute(page: const SigninScreen()));
+        }
+      });
+    }
   }
 
   @override
