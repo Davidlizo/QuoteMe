@@ -28,6 +28,7 @@ class FavoritesController extends GetxController {
     _saveFavorites();
   }
 
+
   // Load favorites from SharedPreferences
   Future<void> _loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
