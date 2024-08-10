@@ -20,7 +20,7 @@ class _SigninScreenState extends State<SigninScreen> {
   bool _rememberMe = false;
   final AuthController authController = Get.find<AuthController>();
 
-   @override
+  @override
   void initState() {
     super.initState();
     authController.loadUserSession();
@@ -106,14 +106,11 @@ class _SigninScreenState extends State<SigninScreen> {
                   ),
                 ),
                 const SizedBox(height: 15.0),
-
-                //RememberMe / Forgotpassword
-                 RememberMeButton(
+                RememberMeButton(
                   rememberMe: _rememberMe,
                   onChanged: (value) {
                     setState(() {
                       _rememberMe = value;
-                      // Save remember me preference
                       SharedPreferences.getInstance().then((prefs) {
                         prefs.setBool('remember_me', value);
                       });
@@ -122,30 +119,33 @@ class _SigninScreenState extends State<SigninScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Button(
-                    onTap: () {
-                      String? emailError = validateEmail(_emailTextController.text);
-                      String? passwordError = validatePassword(_passwordTextController.text);
+                  child: Obx(() => authController.isLoading.value
+                      ? const Center(
+                          child: CircularProgressIndicator(color: Colors.white))
+                      : Button(
+                          onTap: () {
+                            FocusScope.of(context).unfocus();
+                            String emailError = validateEmail(_emailTextController.text);
+                            String passwordError = validatePassword(_passwordTextController.text);
 
-                      if (emailError.isEmpty && passwordError.isEmpty) {
-                        authController.emailController.text = _emailTextController.text;
-                        authController.passwordController.text = _passwordTextController.text;
-                        authController.signIn();
-                      } else {
-                        Get.snackbar(
-                          'Error',
-                          emailError.isNotEmpty ? emailError : passwordError,
-                          colorText: Colors.white,
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: const Color.fromARGB(167, 23, 76, 25),
-                        );
-                      }
-                    },
-                    title: 'SIGN IN',
-                  ),
+                            if (emailError.isEmpty && passwordError.isEmpty) {
+                              authController.emailController.text = _emailTextController.text;
+                              authController.passwordController.text = _passwordTextController.text;
+                              authController.signIn();
+                            } else {
+                              Get.snackbar(
+                                'Error',
+                                emailError.isNotEmpty ? emailError : passwordError,
+                                colorText: Colors.white,
+                                snackPosition: SnackPosition.TOP,
+                                backgroundColor: const Color.fromARGB(167, 23, 76, 25),
+                              );
+                            }
+                          },
+                          title: 'SIGN IN',
+                        )),
                 ),
                 const SizedBox(height: 15),
-                //Route TO Signup
                 RouteToSignup(
                   onpressed: () => Get.toNamed('/signup'),
                   text: 'Don\'t Have An Account?',
