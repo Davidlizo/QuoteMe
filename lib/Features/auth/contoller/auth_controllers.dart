@@ -8,6 +8,17 @@ class AuthController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
+  final RxBool isLoading = false.obs;
+
+    // Get current user's display name
+  String get currentUserName {
+    return _auth.currentUser?.displayName ?? 'User';
+  }
+
+  // Get current user's email
+  String get currentUserEmail {
+    return _auth.currentUser?.email ?? 'No email';
+  }
 
   // Save user authentication state
   Future<void> saveUserSession(bool rememberMe) async {
@@ -56,6 +67,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> signUp() async {
+    isLoading.value = true;
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text,
@@ -63,8 +75,10 @@ class AuthController extends GetxController {
       );
 
       await userCredential.user?.updateDisplayName(usernameController.text);
-      Get.offNamed('/signin');
+      isLoading.value = false;
+      Get.back();
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       String errorMessage = 'An error occurred during sign up. Please try again later.';
       if (e.code == 'weak-password') {
         errorMessage = 'The password provided is too weak.';
@@ -83,6 +97,7 @@ class AuthController extends GetxController {
         backgroundColor: const Color.fromARGB(167, 23, 76, 25),
       );
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         'Error',
         'An unexpected error occurred during sign up. Please try again.',
@@ -94,6 +109,7 @@ class AuthController extends GetxController {
   }
 
   Future<void> signIn() async {
+     isLoading.value = true;
     try {
       await _auth.signInWithEmailAndPassword(
         email: emailController.text,
@@ -107,6 +123,7 @@ class AuthController extends GetxController {
         await saveUserSession(rememberMe);
         Get.offNamed('/quote_me');
       } else {
+        isLoading.value = false;
         Get.snackbar(
           'Error',
           'Unable to retrieve user information. Please try again.',
@@ -116,6 +133,7 @@ class AuthController extends GetxController {
         );
       }
     } on FirebaseAuthException catch (e) {
+      isLoading.value = false;
       String errorMessage = 'Invalid email or password. Please check and try again.';
       if (e.code == 'user-not-found') {
         errorMessage = 'No user found for that email.';
@@ -136,6 +154,7 @@ class AuthController extends GetxController {
         backgroundColor: const Color.fromARGB(167, 23, 76, 25),
       );
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         'Error',
         'An unexpected error occurred during sign in. Please try again.',
